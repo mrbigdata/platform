@@ -9,7 +9,7 @@ public interface Calculator {
      *
      * @param expression arithmetic expression, each operator and operand separated by space.
      * @return result given expression evaluates to.
-     * @throws Exception if expression is invalid.
+     * @throws IllegalArgumentException if expression is invalid.
      */
-    double calculate(String expression) throws Exception;
+    double calculate(String expression);
 }

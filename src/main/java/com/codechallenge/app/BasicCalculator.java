@@ -3,9 +3,11 @@ package com.codechallenge.app;
 import com.sun.javaws.exceptions.InvalidArgumentException;
 
 import java.util.Stack;
+import java.util.StringTokenizer;
 
 /**
  * Basic implementation for Calculator
+ * Using 2 stacks, one for operands, one for operators to maintain correct order of operations.
  */
 public class BasicCalculator implements Calculator{
 
@@ -49,36 +51,47 @@ public class BasicCalculator implements Calculator{
     }
 
     public double calculate(final String expression) throws Exception{
+        if( expression == null ){
+            throw new IllegalArgumentException();
+        }
         double result = 0;
         Operand operand;
-        parse(expression);
+        parseExpression(expression);
         while( !operandStack.isEmpty()){
             operand = operandStack.pop();
             if ( operand.getPriority() == 0 ){
                 Double first = operatorStack.pop();
                 Double second = operatorStack.pop();
                 operatorStack.push(operand.calculate(first, second));
+            }else{
+                //check if should postpone 1st priority calculation until zero priority calculation is done
+                if( operandStack.isEmpty() || operandStack.peek().getPriority() == 1){
+                    Double first = operatorStack.pop();
+                    Double second = operatorStack.pop();
+                    operatorStack.push(operand.calculate(first, second));
+                }
             }
         }
+        result = operatorStack.pop();
         return result;
     }
 
-    private void parseExpression(final String expression) throws Exception{
-        final StringTokenizer st = new StringTokenizer(expression, ' ');
+    private void parseExpression(final String expression){
+        final StringTokenizer st = new StringTokenizer(expression, " ");
         boolean operatorNext = true;
-        while(st.hasNext()){
+        while(st.hasMoreTokens()){
             try {
                 if (operatorNext) {
-                    Integer operator = Integer.parseInt(st.next());
+                    Double operator = Double.parseDouble(st.nextToken());
                     operatorStack.add(operator);
                 }
                 else{
-                    Operand operand = Operand.valueOf(st.next());
+                    Operand operand = Operand.valueOf(st.nextToken());
                     operandStack.add(operand);
                 }
             }
             catch(Exception e){
-                throw new Exception(e);
+                throw new IllegalArgumentException(e);
             }
         }
 
