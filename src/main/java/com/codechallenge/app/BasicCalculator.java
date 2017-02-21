@@ -50,7 +50,7 @@ public class BasicCalculator implements Calculator{
         this.operatorStack = new Stack<Double>();
     }
 
-    public double calculate(final String expression) throws Exception{
+    public double calculate(final String expression){
         if( expression == null ){
             throw new IllegalArgumentException();
         }
