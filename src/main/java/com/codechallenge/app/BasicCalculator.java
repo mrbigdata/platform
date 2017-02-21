@@ -40,7 +40,7 @@ public class BasicCalculator implements Calculator{
         while( !operandStack.isEmpty()){
             //TODO order stacks based on priority
             //TODO pop 2 operators from operators stack,
-            //if MULTIPLY or divide, push result back on stack
+            //
         }
         return result;
     }

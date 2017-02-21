@@ -1,5 +1,6 @@
 package com.codechallenge.app;
 
+import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -29,10 +30,16 @@ public class AppTest
     }
 
     /**
-     * Rigourous Test :-)
+     *
      */
     public void testApp()
     {
-        assertTrue( true );
+        Calculator calculator = new BasicCalculator();
+        try {
+            Assert.assertEquals(7, calculator.calculate("2+5"));
+        }
+        catch(Exception e){
+            Assert.fail();
+        }
     }
 }
