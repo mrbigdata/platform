@@ -38,9 +38,7 @@ public class BasicCalculator implements Calculator{
         Operand operand;
         parse(expression);
         while( !operandStack.isEmpty()){
-            //TODO order stacks based on priority
-            //TODO pop 2 operators from operators stack,
-            //
+            
         }
         return result;
     }
