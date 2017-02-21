@@ -23,14 +23,29 @@ public class BasicCalculator implements Calculator{
         int getPriority(){
             return this.priority;
         }
+
+        double calculate(Double first, Double second){
+            switch(this) {
+                case MINUS:
+                    return first - second;
+                case PLUS:
+                    return first + second;
+                case MULTIPLY:
+                    return first*second;
+                case DIVIDE:
+                    return first/second;
+                default:
+                    return 0;
+            }
+        }
     }
 
     private final Stack<Operand> operandStack;
-    private final Stack<Integer> operatorStack;
+    private final Stack<Double> operatorStack;
 
     public BasicCalculator(){
         this.operandStack = new Stack<Operand>();
-        this.operatorStack = new Stack<Integer>();
+        this.operatorStack = new Stack<Double>();
     }
 
     public double calculate(final String expression) throws Exception{
@@ -38,7 +53,12 @@ public class BasicCalculator implements Calculator{
         Operand operand;
         parse(expression);
         while( !operandStack.isEmpty()){
-            
+            operand = operandStack.pop();
+            if ( operand.getPriority() == 0 ){
+                Double first = operatorStack.pop();
+                Double second = operatorStack.pop();
+                operatorStack.push(operand.calculate(first, second));
+            }
         }
         return result;
     }
