@@ -1,7 +1,5 @@
 package com.codechallenge.app;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
-
 import java.util.Stack;
 import java.util.StringTokenizer;
 
@@ -40,21 +38,40 @@ public class BasicCalculator implements Calculator{
                     return 0;
             }
         }
+
+        static final Operand valueOf(char operandAsString){
+            switch(operandAsString) {
+                case '+':
+                    return Operand.PLUS;
+                case '-':
+                    return Operand.MINUS;
+                case '*':
+                    return Operand.MULTIPLY;
+                case '/':
+                    return Operand.DIVIDE;
+                default:
+                    throw new UnsupportedOperationException(operandAsString + "not supported.");
+            }
+        }
     }
 
     private final Stack<Operand> operandStack;
     private final Stack<Double> operatorStack;
+    //temporary stack to build operator stack in the right order
+    private final Stack<Double> tempOperatorStack;
+    private final Stack<Operand> tempOperandStack;
 
     public BasicCalculator(){
         this.operandStack = new Stack<Operand>();
         this.operatorStack = new Stack<Double>();
+        this.tempOperandStack = new Stack<Operand>();
+        this.tempOperatorStack = new Stack<Double>();
     }
 
     public double calculate(final String expression){
         if( expression == null ){
             throw new IllegalArgumentException();
         }
-        double result = 0;
         Operand operand;
         parseExpression(expression);
         while( !operandStack.isEmpty()){
@@ -65,34 +82,52 @@ public class BasicCalculator implements Calculator{
                 operatorStack.push(operand.calculate(first, second));
             }else{
                 //check if should postpone 1st priority calculation until zero priority calculation is done
-                if( operandStack.isEmpty() || operandStack.peek().getPriority() == 1){
+                if( !operandStack.isEmpty() && operandStack.peek().getPriority() == 0){
+                    Operand currentOperand = operand;
+                    Double currentOperator = operatorStack.pop();
+                    Operand nextOperand = operandStack.pop();
+                    Double first = operatorStack.pop();
+                    Double second = operatorStack.pop();
+                    operatorStack.push(operand.calculate(first, second));
+                    operatorStack.push(currentOperator);
+                    operandStack.push(currentOperand);
+                }
+                else{
                     Double first = operatorStack.pop();
                     Double second = operatorStack.pop();
                     operatorStack.push(operand.calculate(first, second));
                 }
             }
         }
-        result = operatorStack.pop();
-        return result;
+        return operatorStack.pop();
     }
 
     private void parseExpression(final String expression){
         final StringTokenizer st = new StringTokenizer(expression, " ");
         boolean operatorNext = true;
-        while(st.hasMoreTokens()){
-            try {
+        try {
+            while (st.hasMoreTokens()) {
                 if (operatorNext) {
                     Double operator = Double.parseDouble(st.nextToken());
-                    operatorStack.add(operator);
-                }
-                else{
-                    Operand operand = Operand.valueOf(st.nextToken());
-                    operandStack.add(operand);
+                    tempOperatorStack.add(operator);
+                    operatorNext = false;
+                } else {
+                    Operand operand = Operand.valueOf(st.nextToken().toCharArray()[0]);
+                    tempOperandStack.add(operand);
+                    operatorNext = true;
                 }
             }
-            catch(Exception e){
-                throw new IllegalArgumentException(e);
-            }
+        }
+        catch(final Exception e){
+            operandStack.clear();
+            operatorStack.clear();
+            throw new IllegalArgumentException(expression + " is invalid", e);
+        }
+        while( !tempOperatorStack.isEmpty() ){
+            operatorStack.push(tempOperatorStack.pop());
+        }
+        while( !tempOperandStack.isEmpty() ){
+            operandStack.push(tempOperandStack.pop());
         }
 
     }

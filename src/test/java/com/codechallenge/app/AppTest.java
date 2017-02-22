@@ -36,9 +36,10 @@ public class AppTest
     {
         Calculator calculator = new BasicCalculator();
         try {
-            Assert.assertEquals(7, calculator.calculate("2+5"));
+            Assert.assertEquals(7.0, calculator.calculate("2 + 5"));
         }
         catch(Exception e){
+            e.printStackTrace();
             Assert.fail();
         }
     }
