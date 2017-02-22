@@ -88,7 +88,7 @@ public class BasicCalculator implements Calculator{
                     Operand nextOperand = operandStack.pop();
                     Double first = operatorStack.pop();
                     Double second = operatorStack.pop();
-                    operatorStack.push(operand.calculate(first, second));
+                    operatorStack.push(nextOperand.calculate(first, second));
                     operatorStack.push(currentOperator);
                     operandStack.push(currentOperand);
                 }

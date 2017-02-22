@@ -32,14 +32,23 @@ public class AppTest
     /**
      *
      */
-    public void testApp()
+    public void testBasic()
     {
         Calculator calculator = new BasicCalculator();
         try {
             Assert.assertEquals(7.0, calculator.calculate("2 + 5"));
         }
         catch(Exception e){
-            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    public void testMixedOpPriorities(){
+        Calculator calculator = new BasicCalculator();
+        try{
+            Assert.assertEquals(14.0, calculator.calculate("20 / 5 + 3 * 4 - 2"));
+        }
+        catch(Exception e){
             Assert.fail();
         }
     }
